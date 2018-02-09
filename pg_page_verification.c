@@ -228,7 +228,7 @@ scan_directory(const char *dirpath)
                     continue;
 
                 char new_dirpath[MAX_DIR_LENGTH];
-                sprintf(new_dirpath, "%s/%s", dirpath, dir->d_name);
+                snprintf(new_dirpath, MAX_DIR_LENGTH, "%s/%s", dirpath, dir->d_name);
 
                 corrupt_pages_found += scan_directory(new_dirpath);
             }
