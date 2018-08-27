@@ -160,7 +160,7 @@ scan_segmentfile(const char *filename, const char *dirpath)
         printf("DEBUG: scanning segment filename: %s/%s\n",
             dirpath, filename);
 
-    int fd;
+    int fd, n;
     char page[BLCKSZ];
     BlockNumber blkno = 0;
     BlockNumber corrupted = 0;
@@ -175,13 +175,18 @@ scan_segmentfile(const char *filename, const char *dirpath)
         return 1;
     }
 
-    while (read(fd, page, BLCKSZ) == BLCKSZ)
+    while ((n = read(fd, page, BLCKSZ)) == BLCKSZ)
     {
         if (is_page_corrupted(page, blkno, filename, dirpath))
         {
             corrupted++;
         }
         blkno++;
+    }
+    if (n > 0)
+    {
+        /* treat short reads as corrupted pages */
+        corrupted++;
     }
     close(fd);
 
